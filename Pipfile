@@ -4,7 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+lightkurve = "*"
+numpy = "*"
+matplotlib = "*"
 flask = "*"
+notebook = "*"
+packaging = "*"
 
 [dev-packages]
 

@@ -1,38 +1,44 @@
-from flask import Flask, request, send
-import matplotlib
+from flask import Flask, request, send_file, jsonify, g
 import lightkurve as lk
-import scipy
+import numpy as np
+from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
+import logging
 
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 
 @app.route('/')
 def hello_world():
     return 'astro-hacks'
 
+# frequencies = {}
+
+# @app.route('/get_frequencies')
+# def get_frequencies():
+#     print(g.frequencies)
+#     return {'test':'hi'}
+
+
 @app.route('/create_curve', methods=['POST'])
 def create_curve():
     data = request.form
+    name = data['lightcurve'].split(',')[0]
+    author = "Kepler"
+    quarter = data['lightcurve'].split(',')[1]
+   
     
     #processing the lighcurve
-    search_result = lk.search_lightcurve("V1357 Cyg")
-    lc = search_result[0].download()
+    lc = lk.search_lightcurve(name, author=author, quarter=int(quarter)).download()
     pg = lc.normalize(unit='ppm').to_periodogram()
+    power = []
+    for p in pg.power.flat:
+        power.append(p.value)
     
-    #returning plot
-    pg. plot() 
-    plt.savefig('my_plot.png')
-    
-    
-    #returning the array of peaks
-    pow=pg.power
-    power_array= np.zeros(12000)
-    k=0
-    for i in pow:
-        power_array[k]=i.value
-        k=k+1
-    peaks=scipy.signal.find_peaks(power_array, height=0, distance=350)
-    return jsonify(peaks), send_file('my_plot.png', mimetype='image/gif')
+    x = np.array(power)
+    peaks, _ = find_peaks(x, distance=400)
+
+    return jsonify( {'frequencies': list(x[peaks])})
 
 if __name__ == '__main__':  
-   app.run()
+   app.run(debug=True)
