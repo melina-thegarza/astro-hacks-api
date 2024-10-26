@@ -1,7 +1,8 @@
 # astro-hacks-api
-
-## api: https://melinathegarza.pythonanywhere.com/
-### ex. POST: https://melinathegarza.pythonanywhere.com/create_curve
-    ### send form data with POST
-
-## how to run locally `python app.py`
+## how to run locally
+#### set-Up env/install dependencies
+(1) clone repo
+(2)`pipenv shell`
+(3) `pipenv install`
+#### serve api
+`python app.py`
