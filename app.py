@@ -1,4 +1,5 @@
 from flask import Flask, request, send_file, jsonify, g
+from flask_cors import CORS, cross_origin
 import lightkurve as lk
 import numpy as np
 from scipy.signal import find_peaks
@@ -12,15 +13,9 @@ app.logger.setLevel(logging.INFO)
 def hello_world():
     return 'astro-hacks'
 
-# frequencies = {}
-
-# @app.route('/get_frequencies')
-# def get_frequencies():
-#     print(g.frequencies)
-#     return {'test':'hi'}
-
 
 @app.route('/create_curve', methods=['POST'])
+@cross_origin(origin='*')
 def create_curve():
     data = request.form
     name = data['lightcurve'].split(',')[0]
